@@ -3,6 +3,7 @@ using System;
 using ProductImageFactory;
 using Moq;
 using System.Linq;
+using FluentAssertions;
 namespace ProductImageFactoryTests
 {
   public class ProductImageFactoryTests
@@ -42,6 +43,7 @@ namespace ProductImageFactoryTests
       var b3 = factory.Create(uri2); // load uri2
 
       //Assert
+      a.Should().BeSameAs(a1);
       Assert.Same(a, a1);
       Assert.NotSame(a, b);
       Assert.Same(b, b2);
