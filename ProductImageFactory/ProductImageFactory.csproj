@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="System.Interactive" />
+    <None Remove="System.Interactive.Async" />
+    <None Remove="System.Reactive" />
+    <None Remove="System.Linq.Async" />
+    <None Remove="Autofac" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Interactive" Version="6.0.1" />
+    <PackageReference Include="System.Interactive.Async" Version="6.0.1" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="Autofac" Version="6.4.0" />
+  </ItemGroup>
+</Project>
