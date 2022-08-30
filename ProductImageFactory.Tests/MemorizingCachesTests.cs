@@ -1,11 +1,12 @@
-﻿using Xunit;
-
-using ProductImageFactory;
-using System.Threading;
-using System.Threading.Tasks;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+using FluentAssertions;
+using ProductImageFactory;
+using Xunit;
 
 namespace ProductImageFactoryTests
 {
@@ -90,10 +91,11 @@ namespace ProductImageFactoryTests
       
         };
 
-      Assert.False(object.ReferenceEquals(image1aa, image1a));
-      Assert.True(object.ReferenceEquals(image1c, image1d));
-      Assert.True(createCalls == 9);
-      Assert.True(expectedCalls.SequenceEqual(uriCalls));
+
+      image1aa.Should().NotBeSameAs(image1a);
+      image1c.Should().BeSameAs(image1d);
+      createCalls.Should().Be(9);
+      uriCalls.Should().BeEquivalentTo(expectedCalls);
     }
 
 
@@ -166,30 +168,30 @@ namespace ProductImageFactoryTests
       var factoryCached = MemorizeFunctionality.MemorizeWithStaleTime(TimeSpan.FromMinutes(10), getTime, factoryFunc, 2);
       var c = new CancellationToken();
 
-     //Act
-     var results = await calls.ToAsyncEnumerable().SelectAwait(async x =>
-      {
-        dateTime = x.time;
-        shouldFault = x.shouldFault;
-        shouldCancel = x.shouldCancel;
-        try
-        {
-          if (x.shouldCancel)
-          {
-            var cc = new CancellationTokenSource();
-            cc.CancelAfter(500);
-            return await factoryCached(x.uri, cc.Token);
-          }
-          else
-            return await factoryCached(x.uri, c);
-        }
-        catch (Exception _)
-        {
-          return null;
-        }
+      //Act
+      var results = await calls.ToAsyncEnumerable().SelectAwait(async x =>
+       {
+         dateTime = x.time;
+         shouldFault = x.shouldFault;
+         shouldCancel = x.shouldCancel;
+         try
+         {
+           if (x.shouldCancel)
+           {
+             var cc = new CancellationTokenSource();
+             cc.CancelAfter(500);
+             return await factoryCached(x.uri, cc.Token);
+           }
+           else
+             return await factoryCached(x.uri, c);
+         }
+         catch (Exception _)
+         {
+           return null;
+         }
 
-      })
-      .ToListAsync();
+       })
+       .ToListAsync();
 
       //Assert
       var expectedCalls = new (Uri uri, DateTime time)[]{
@@ -206,12 +208,11 @@ namespace ProductImageFactoryTests
         (uri3, dateTimeThird.AddSeconds(3)),
         (uri2, dateTimeThird.AddSeconds(3)),
         (uri4, dateTimeThird.AddSeconds(3)),
-
         (uri2, dateTimeThird.AddSeconds(3)),
         };
 
-      Assert.True(createCalls == 14);
-      Assert.True(expectedCalls.SequenceEqual(uriCalls));
+      createCalls.Should().Be(14);
+      uriCalls.Should().BeEquivalentTo(expectedCalls);
     }
 
     [Fact]
@@ -245,7 +246,7 @@ namespace ProductImageFactoryTests
       var image1cAsync = factoryCached(uri1, c);
       var image2aAsync = factoryCached(uri2, c); //load uri2
       var image3aAsync = factoryCached(uri3, c); //load uri3 remove uri1
-      var image2bAsync = factoryCached(uri2, c); 
+      var image2bAsync = factoryCached(uri2, c);
       var image1dAsync = factoryCached(uri1, c); // load uri1
 
       var image1a = await image1aAsync;
@@ -255,8 +256,9 @@ namespace ProductImageFactoryTests
       var image3a = await image3aAsync;
       var image2b = await image2bAsync;
       var image1d = await image1dAsync;
-      Assert.True(createCalls == 4);
-      Assert.NotSame(image1a,image1d);
+
+      createCalls.Should().Be(4);
+      image1a.Should().NotBeSameAs(image1d);
     }
   }
 }
