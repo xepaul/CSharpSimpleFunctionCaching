@@ -1,6 +1,6 @@
-using System.Threading;
 using System.Collections.Concurrent;
 using static System.Math;
+using System.Threading;
 namespace ProductImageFactory;
 
 public static class MemorizeFunctionality

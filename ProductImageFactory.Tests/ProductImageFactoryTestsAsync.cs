@@ -1,10 +1,11 @@
-using Xunit;
-
-using ProductImageFactory;
-using Moq;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+
+using FluentAssertions;
+using Moq;
+using ProductImageFactory;
+using Xunit;
 
 namespace ProductImageFactoryTests;
 
@@ -35,8 +36,8 @@ public class ProductImageFactoryTestsAsync
     var b = await bAsync;
     var c = await cAsync;
     //Assert
-    Assert.Same(a, b);
-    Assert.NotSame(a, c);
+    a.Should().BeSameAs(b);
+    a.Should().NotBeSameAs(c);
 
     mCreator.Verify(m => m.CreateAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Exactly(2));  // assert the real factroy is only called 3 times
   }
@@ -72,8 +73,8 @@ public class ProductImageFactoryTestsAsync
     var imageC = await imageCAsync;
 
     //Asset
-    Assert.NotSame(imageA, imageB);
-    Assert.Same(imageB, imageC);
+    imageA.Should().NotBeSameAs(imageB);
+    imageB.Should().BeSameAs(imageC);
 
     mCreator.Verify(m => m.CreateAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Exactly(3)); // assert the real factroy is only called 3 times
   }

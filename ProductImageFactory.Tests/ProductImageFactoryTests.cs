@@ -1,9 +1,9 @@
-using Xunit;
 using System;
-using ProductImageFactory;
-using Moq;
 using System.Linq;
 using FluentAssertions;
+using Moq;
+using ProductImageFactory;
+using Xunit;
 namespace ProductImageFactoryTests
 {
   public class ProductImageFactoryTests
@@ -44,11 +44,10 @@ namespace ProductImageFactoryTests
 
       //Assert
       a.Should().BeSameAs(a1);
-      Assert.Same(a, a1);
-      Assert.NotSame(a, b);
-      Assert.Same(b, b2);
-      Assert.Same(a, a2);
-      Assert.NotSame(b, b3);
+      a.Should().NotBeSameAs(b);
+      b.Should().BeSameAs(b2);
+      a.Should().BeSameAs(a2);
+      b.Should().NotBeSameAs(b3);
 
       Mock.Get(config).Verify(m => m.StaleTime, Times.Exactly(1));
       mCreator.Verify(m => m.Create(It.IsAny<Uri>()), Times.Exactly(5));
@@ -81,8 +80,8 @@ namespace ProductImageFactoryTests
       var imageC = uut.Create(uri1);
 
       // Assert
-      Assert.NotSame(imageA, imageB);
-      Assert.Same(imageB, imageC);
+      imageA.Should().NotBeSameAs(imageB);
+      imageB.Should().BeSameAs(imageC);
       Mock.Get(config).Verify(m => m.StaleTime, Times.Exactly(1));
       mProductImageUncachedFactory.Verify(m => m.Create(It.IsAny<Uri>()), Times.Exactly(2));
     }
@@ -125,8 +124,8 @@ namespace ProductImageFactoryTests
       var imageC = productAccesses[2];
 
       // Assert
-      Assert.NotSame(imageA, imageB);
-      Assert.Same(imageB, imageC);
+      imageA.Should().NotBeSameAs(imageB);
+      imageB.Should().BeSameAs(imageC);
       Mock.Get(config).Verify(m => m.StaleTime, Times.Exactly(1));
       Mock.Get(config).Verify(m => m.CacheCapacity, Times.Exactly(1));
       mProductImageUncachedFactory.Verify(m => m.Create(It.IsAny<Uri>()), Times.Exactly(2));
