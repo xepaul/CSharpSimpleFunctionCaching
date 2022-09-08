@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 using ProductImageFactory;
+using ProductImageFactory.Infrastructure;
 using Xunit;
 
 namespace ProductImageFactoryTests
