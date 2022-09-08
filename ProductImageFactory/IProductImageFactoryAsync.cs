@@ -4,5 +4,4 @@ namespace ProductImageFactory
   {
     ValueTask<ProductImage> CreateAsync(Uri uri);
   }
-
 }
